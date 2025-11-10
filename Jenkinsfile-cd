@@ -11,7 +11,7 @@ pipeline {
             steps {
                 // This step is redundant because the declarative pipeline checks out SCM automatically
                 // However, it's fine to leave it for explicit control.
-                git branch: 'main', url: 'https://github.com/Harinipsp/jenkins.git'
+                git branch: 'main', url: 'https://github.com/Subramani-Raja-R/jenkins.git'
             }
         }
 
