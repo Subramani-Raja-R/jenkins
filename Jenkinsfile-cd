@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+    tools {
+        // You need to ensure 'Maven3' is configured in your Jenkins global tools
+        // If not, it will fail to find it.
+        maven 'Maven3'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // This step is redundant because the declarative pipeline checks out SCM automatically
+                // However, it's fine to leave it for explicit control.
+                git branch: 'main', url: 'https://github.com/Harinipsp/jenkins.git'
+            }
+        }
+
+        stage('Download Artifact from CI') {
+            steps {
+                // Use the 'copyArtifacts' step correctly with the 'lastSuccessful()' selector.
+                // The 'lastSuccessful()' selector needs to be part of the 'copyArtifacts' call, not a separate method.
+                // The issue was a typo in the previous Jenkinsfile where you used it as a separate step.
+                copyArtifacts(
+                    projectName: 'CIPipeline', // name of your CI job
+                    selector: lastSuccessful()
+                )
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                // This will run the JAR from the downloaded artifact.
+                // It assumes the JAR file is located at the specified path.
+                bat 'java -jar target/ciex-app-1.5.jar'
+            }
+        }
+    }
+}
